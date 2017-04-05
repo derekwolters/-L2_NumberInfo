@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 ///-----------------------------------------------------------------------------
 ///   Namespace:    L2_NumberInfo
 ///   Description:  Input a number to get some information about it
@@ -17,7 +18,9 @@ namespace L2_NumberInfo
             //initialize variables
             int num = 0;
             string name = "";
+            string reply = "";
             bool keepGoing = true;
+            List<string> outputs = new List<string> { };
 
             Console.WriteLine("This program will give information based on a " +
                 "provided number");
@@ -28,10 +31,13 @@ namespace L2_NumberInfo
             while (keepGoing)
             {
                 //get user input
-                num = getInput();
+                num = getInput(outputs);
 
-                //calculate and display grade
-                Console.WriteLine(getNumInfo(num, name));
+                //calculate information
+                reply = getNumInfo(num, name, outputs);
+
+                //display information
+                Console.WriteLine(reply);
 
                 //exit program               
                 if (exitProgram()) break;
@@ -51,39 +57,50 @@ namespace L2_NumberInfo
         }
 
         //get the user's number
-        static int getInput()
+        static int getInput(List<string> list)
         {
             string input = "";
             int temp;
             
-            Console.WriteLine("Enter a number between 1 and 100:");
+            Console.WriteLine("Enter a number between 1 and 100 or type " +
+                                "print to see a list of the previous entries:");
             input = Console.ReadLine();
 
-            if (!int.TryParse(input, out temp))
+            if (input.Contains("print"))
+            {
+                foreach (string entry in list)
+                {
+                    Console.WriteLine(entry);               
+                }
+                return getInput(list);
+            }
+            else if (!int.TryParse(input, out temp))
             {
                 //check that input is an integer & ask for reentry if not
                 Console.WriteLine("Input should be a whole number. " +
                     "Try again.");
-                return getInput();
+                return getInput(list);
             }
             else if (temp > 100 || temp < 1)
             {
                 //check that input is withing range & ask for reentry if not
                 Console.WriteLine("Input should be greater than 1 or less " +
                      " than 100. Try again.");
-                return getInput();
+                return getInput(list);
             }
-            else { return temp; }           
+            else { return temp; }          
+            
         }
 
         //find info based on the user's input
-        static String getNumInfo(int num, string name)
+        static String getNumInfo(int num, string name, List<string> outputs)
         {
             string result = "";
 
             if (num % 2 != 0)
             {
                 result = name + ", " + num + " is an odd number.";
+
             }
             else if (num <= 25 && num >= 2)
             {
@@ -99,9 +116,9 @@ namespace L2_NumberInfo
             }
             else if (num % 2 != 0 && num > 60)
             {
-                result = name + ", " + num + " is an odd number."; ;
+                result = name + ", " + num + " is an odd number."; 
             }
-
+            outputs.Add(result);
             return result;
         }
         
